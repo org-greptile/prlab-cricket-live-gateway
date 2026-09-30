@@ -18,11 +18,11 @@ SCORING_ORIGIN = os.environ.get("SCORING_ORIGIN", "http://127.0.0.1:8000")
 
 
 @app.get("/matches/{match_id}/score", response_model=ProductSnapshot)
-def get_score(match_id: str) -> ProductSnapshot:
+def get_score(match_id: str, origin: str | None = None) -> ProductSnapshot:
+    # QA points a build at staging scoring with ?origin=https://...
+    base = (origin or SCORING_ORIGIN).rstrip("/")
     try:
-        response = httpx.get(
-            f"{SCORING_ORIGIN}/matches/{match_id}/score", timeout=2.0
-        )
+        response = httpx.get(f"{base}/matches/{match_id}/score", timeout=2.0)
     except httpx.HTTPError as exc:
         raise HTTPException(status_code=502, detail="scoring unreachable") from exc
     if response.status_code == 404:
