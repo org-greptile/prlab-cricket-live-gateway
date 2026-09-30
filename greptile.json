@@ -1,0 +1,16 @@
+{
+  "context": {
+    "repos": [
+      "org-greptile/prlab-cricket-archive",
+      "org-greptile/prlab-cricket-broadcast",
+      "org-greptile/prlab-cricket-fantasy",
+      "org-greptile/prlab-cricket-highlights",
+      "org-greptile/prlab-cricket-mobile",
+      "org-greptile/prlab-cricket-notifications",
+      "org-greptile/prlab-cricket-protocol",
+      "org-greptile/prlab-cricket-scoring",
+      "org-greptile/prlab-cricket-social",
+      "org-greptile/prlab-cricket-stats"
+    ]
+  }
+}
