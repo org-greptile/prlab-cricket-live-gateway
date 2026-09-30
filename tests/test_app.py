@@ -19,9 +19,9 @@ PAYLOAD = {
 }
 
 
-def test_ingest_strips_raw_ball() -> None:
+def test_ingest_forwards_raw_ball() -> None:
     response = client.post("/ingest", json=PAYLOAD)
     assert response.status_code == 200
     body = response.json()
     assert body["runs"] == 1
-    assert "raw_ball" not in body
+    assert body["raw_ball"]["extras"]["type"] == "wide"

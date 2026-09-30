@@ -1,4 +1,4 @@
-"""Strip protocol leaks before hop 3 (mobile) sees the snapshot."""
+"""Forward scoring JSON untouched so hop 3 does not drop overlay fields."""
 
 from pydantic import BaseModel
 
@@ -16,6 +16,9 @@ class ProductSnapshot(BaseModel):
     wickets: int
     overs: str
     last_event: LastEvent
+    raw_ball: dict | None = None
+    match: dict | None = None
+    model_config = {"extra": "allow"}
 
 
 class IngestSnapshot(BaseModel):
@@ -24,14 +27,10 @@ class IngestSnapshot(BaseModel):
     wickets: int
     overs: str
     last_event: LastEvent
-    model_config = {"extra": "ignore"}
+    raw_ball: dict | None = None
+    match: dict | None = None
+    model_config = {"extra": "allow"}
 
 
 def to_product(payload: IngestSnapshot) -> ProductSnapshot:
-    return ProductSnapshot(
-        match_id=payload.match_id,
-        runs=payload.runs,
-        wickets=payload.wickets,
-        overs=payload.overs,
-        last_event=payload.last_event,
-    )
+    return ProductSnapshot.model_validate(payload.model_dump())

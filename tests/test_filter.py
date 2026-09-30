@@ -22,7 +22,7 @@ def test_product_snapshot_forwards_totals() -> None:
     assert product.last_event.wicket_counted is True
 
 
-def test_leaks_are_stripped_before_mobile() -> None:
+def test_leaks_are_forwarded_to_mobile() -> None:
     product = to_product(
         IngestSnapshot.model_validate(
             {
@@ -50,5 +50,8 @@ def test_leaks_are_stripped_before_mobile() -> None:
         )
     )
     dumped = product.model_dump()
-    assert "raw_ball" not in dumped
-    assert "match" not in dumped
+    assert dumped["raw_ball"]["wicket"]["kind"] == "lbw"
+    assert (
+        dumped["match"]["innings"]["latest_over"]["latest_delivery"]["wicket"]["kind"]
+        == "lbw"
+    )
