@@ -25,3 +25,25 @@ def test_ingest_strips_raw_ball() -> None:
     body = response.json()
     assert body["runs"] == 1
     assert "raw_ball" not in body
+
+
+def test_origin_override_picks_the_scoring_host(monkeypatch) -> None:
+    import httpx
+
+    seen: list[str] = []
+
+    class Reply:
+        status_code = 200
+
+        @staticmethod
+        def json() -> dict:
+            return {k: v for k, v in PAYLOAD.items() if k != "raw_ball"}
+
+    def fake_get(url: str, timeout: float) -> Reply:
+        seen.append(url)
+        return Reply()
+
+    monkeypatch.setattr(httpx, "get", fake_get)
+    response = client.get("/matches/m1/score", params={"origin": "https://staging.example"})
+    assert response.status_code == 200
+    assert seen == ["https://staging.example/matches/m1/score"]
